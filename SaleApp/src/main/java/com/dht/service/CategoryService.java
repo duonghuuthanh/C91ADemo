@@ -7,6 +7,7 @@ package com.dht.service;
 
 import com.dht.pojo.Category;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLDataException;
 import java.sql.SQLException;
@@ -23,22 +24,39 @@ public class CategoryService {
         if (kw == null)
             throw new SQLDataException();
         
-        Connection conn = JdbcUtils.getConn();
-        
-        Statement stm = conn.createStatement();
-        ResultSet rs = stm.executeQuery("SELECT * FROM category");
-        
-        List<Category> cates = new ArrayList<>();
-        while (rs.next()) {
-            Category c = new Category();
-            c.setId(rs.getInt("id"));
-            c.setName(rs.getString("name"));
-            c.setDescription(rs.getString("description"));
-            
-            cates.add(c);
+        List<Category> cates;
+        try (Connection conn = JdbcUtils.getConn()) {
+            Statement stm = conn.createStatement();
+            ResultSet rs = stm.executeQuery("SELECT * FROM category");
+            cates = new ArrayList<>();
+            while (rs.next()) {
+                Category c = new Category();
+                c.setId(rs.getInt("id"));
+                c.setName(rs.getString("name"));
+                c.setDescription(rs.getString("description"));
+                
+                cates.add(c);
+            }
         }
-        
-        conn.close();
         return cates;
     }
+    
+   public Category getCateById(int cateId) throws SQLException {
+       Connection conn = JdbcUtils.getConn();
+       String sql ="SELECT * FROM category WHERE id=?";
+       PreparedStatement stm = conn.prepareStatement(sql);
+       stm.setInt(1, cateId);
+       
+       ResultSet rs = stm.executeQuery();
+       
+       Category c = null;
+       while (rs.next()) {
+           c = new Category();
+           c.setId(rs.getInt("id"));
+           c.setName(rs.getString("name"));
+           break;
+       }
+       
+       return c;
+   }
 }

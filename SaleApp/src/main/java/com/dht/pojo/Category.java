@@ -18,6 +18,19 @@ public class Category {
     public String toString() {
         return this.name;
     }
+
+//    @Override
+//    public boolean equals(Object obj) {
+//        Category c = (Category) obj;
+//        return this.id == c.id; //To change body of generated methods, choose Tools | Templates.
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        int hash = 3;
+//        hash = 79 * hash + this.id;
+//        return hash;
+//    }
     
     
 

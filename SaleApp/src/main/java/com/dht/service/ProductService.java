@@ -31,7 +31,7 @@ public class ProductService {
         if (kw == null)
             throw new SQLDataException("error");
         
-        String sql = "SELECT * FROM product WHERE name like concat('%', ?, '%')";
+        String sql = "SELECT * FROM product WHERE name like concat('%', ?, '%') ORDER BY id DESC";
         PreparedStatement stm = this.getConn().prepareStatement(sql);
         stm.setString(1, kw);
         
@@ -57,6 +57,22 @@ public class ProductService {
             stm.setString(1, p.getName());
             stm.setBigDecimal(2, p.getPrice());
             stm.setInt(3, p.getCategoryId());
+            
+            int rows = stm.executeUpdate();
+            
+            return rows > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return false;
+    }
+    
+    public boolean deleteProduct(int productId) {
+        try {
+            String sql = "DELETE FROM product WHERE id=?";
+            PreparedStatement stm = this.conn.prepareStatement(sql);
+            stm.setInt(1, productId);
             
             int rows = stm.executeUpdate();
             
